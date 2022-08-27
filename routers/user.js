@@ -1,10 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const jwt = require('jsonwebtoken');
-
-const PRIVATE_KEY = 'SEB_39_38';
-const payload = { id: 'YHJ96', auth: true };
-const option = { algorithm: 'HS256', expiresIn: '30m' };
+const { jwtSign } = require('../utils/jwtToken');
 
 /*
 
@@ -17,18 +13,34 @@ const option = { algorithm: 'HS256', expiresIn: '30m' };
 마지막 단계에서 무결성 유지?
 */
 
+/* 
+토큰을 2개 발급한다. 
+access_token refresh_token
+accres_token 30분
+refresh_token 2주
+refresh_token을 DB에 저장한다. 
+*/
+
 /* 로컬 스토리지 && 쿠키로 보내야 한다. */
 
 /* 백엔드에서 jwt 권한을 확인한다? */
 
-const signJWT = jwt.sign(payload, PRIVATE_KEY, option);
+const store = {};
 
-router.get('/', (req, res) => res.send('user'));
+router.get('/', (req, res) => {
+  return res.send('user');
+});
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   const { id, pw } = req.body;
-  if (id !== 'yhj96' || pw !== '1234') return res.status(404).send();
-  return res.status(200).send(signJWT);
+  if (id !== 'yhj96' || pw !== '1234') return res.status(404);
+  const { access_token, refresh_token } = await jwtSign(id);
+  store[id] = refresh_token;
+  return res
+    .status(200)
+    .cookie('access_token', access_token, { httpOnly: true })
+    .cookie('refresh_token', refresh_token, { httpOnly: true })
+    .json({ auth: true });
 });
 
 router.delete('/', (req, res) => res.send('user'));
