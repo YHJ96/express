@@ -3,6 +3,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const app = express();
+require('dotenv').config();
 
 const PORT = 8080;
 
