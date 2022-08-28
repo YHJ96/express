@@ -21,5 +21,5 @@ if (쿠키가 둘 다 없는 경우) then {
 if (로그인 로직) then ( 1. 클라이언트에서 받은 code를 Git Auth 서버에 전송한다. 2. Git Auth에서 access_token을 전달 받는다. 3. 서버에서 Git access_token 정보를 Git Resource 서버에 전송한다. 4. Git Resource 서버에서 받은 유저 정보를 DB에 저장하며 access_token과 refresh_token의 payload에 이메일 정보를 넣어서 생성한다. 5. 유저 정보는 Body에 jwt 토큰 2개는 쿠키에 넣어서 보낸다.
 )
 
-if (클라이언트에서 로그아웃 요청을 보낸 경우) then ( 1. 로그아웃 할 때 Delete?
+if (클라이언트에서 로그아웃 요청을 보낸 경우) then ( 1. 서버에서 쿠키 삭제
 )

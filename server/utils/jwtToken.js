@@ -4,12 +4,12 @@ const PRIVATE_KEY = 'SEB_39_38';
 const option = { algorithm: 'HS256', expiresIn: '30m' };
 
 const jwtSign = async (payload) => {
-  const access_token = jwt.sign({ id: payload }, PRIVATE_KEY, option);
-  const refresh_token = jwt.sign({ id: payload }, PRIVATE_KEY, {
+  const access_jwt_token = jwt.sign({ id: payload }, PRIVATE_KEY, option);
+  const refresh_jwt_token = jwt.sign({ id: payload }, PRIVATE_KEY, {
     ...option,
     expiresIn: '14d',
   });
-  return { access_token, refresh_token };
+  return { access_jwt_token, refresh_jwt_token };
 };
 
 const jwtVerify = async (access_token, refresh_token) => {

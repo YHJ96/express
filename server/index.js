@@ -15,16 +15,22 @@ const { jwtSign, jwtVerify, jwtRefreshVerify } = require('./utils/jwtToken');
 const userCheckMiddleWare = async (req, res, next) => {
   const { originalUrl, method } = req;
   if (originalUrl === '/user' && method === 'POST') return next();
-  const { access_token, refresh_token } = req.cookies;
-  const type = await jwtVerify(access_token, refresh_token);
-  const token = await jwtRefreshVerify(refresh_token);
-  console.log(type, token);
+  const { access_jwt_token, refresh_jwt_token } = req.cookies;
+  const type = await jwtVerify(access_jwt_token, refresh_jwt_token);
+  const token = await jwtRefreshVerify(refresh_jwt_token);
+
+  // 타입 체크 시작
+  // access_jwt_token 검증 되었을 경우
   if (type === 'type1') return next();
+  // access_jwt_token 만료 되었지만 refresh_jwt_token 검증된 경우
   if (type === 'type2') {
-    const { access_token } = await jwtSign(token.id);
-    res.cookie('access_token', access_token, { httpOnly: true });
+    const { access_jwt_token } = await jwtSign(token.id);
+    res.cookie('access_jwt_token', access_jwt_token, { httpOnly: true });
+    return next();
   }
+  // access_jwt_token 만료 && refresh_jwt_token 만료
   if (type === 'type3') return res.send('로그인을 다시 해주세요.');
+  // 예외 처리
   return res.send('타입이 없습니다.');
 };
 
